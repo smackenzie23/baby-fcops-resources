@@ -1,0 +1,24 @@
+#!/bin/bash
+
+statusfile=/opt/zabbix/logs/dirvish.out
+mount_point="$1"
+
+ret_string=""
+ret_string=$(/opt/nagios/nagios-plugins/check_ismounted ${mount_point})
+rc=$?
+
+if [ ${rc} -ne "0" ]; then
+   echo ${ret_string}
+   exit ${rc}
+fi
+
+if [ ! -f $statusfile ] ; then
+   echo "No dirivsh status file found"
+   exit 0
+fi
+
+exitstatus=`tail -1 $statusfile`
+
+head -n 1 $statusfile
+
+exit $exitstatus
